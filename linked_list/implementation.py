@@ -1,5 +1,5 @@
 from .interface import AbstractLinkedList
-
+from .node import Node
 
 class LinkedList(AbstractLinkedList):
     """
@@ -7,34 +7,143 @@ class LinkedList(AbstractLinkedList):
     """
 
     def __init__(self, elements=None):
-        pass
+        # Define start node
+        # Define end node
+        # Link nodes together
+        # self.start = Node(ele)
+        self.start = None
+        self.end = None
+        self.length = 0
+        if (elements is None) or len(elements) == 0:
+            return
+        else:
+            self.length = len(elements)  # An internal counter on our list length
+            # Define start/origin node
+            start_node = Node(elements[0])
+            self.start = start_node
+            self.end = start_node
+            for idx in range(1, self.length):
+                current_node = Node(elements[idx])
+                self.end.next = current_node
+                self.end = current_node
+
+                # hacky way to set start node
+                # if idx == 0:
+                #     self.start = current_node
 
     def __str__(self):
-        pass
+        # Rebuild our array
+        current_node = self.start
+        array = []
+
+        while current_node:
+            array.append(current_node.elem)
+            current_node = current_node.next
+        return str(array)
 
     def __len__(self):
-        pass
+        return self.length
 
     def __iter__(self):
         pass
 
     def __getitem__(self, index):
-        pass
+        # check for index length
+        if index >= self.length:
+            raise IndexError
+        # We need to iterate the chain
+        return_node = self.start
+        for idx in range(0, index):
+            return_node = return_node.next
+        return return_node.elem
 
     def __add__(self, other):
-        pass
+        # We hacked this via array
+        array = []
+
+        # for self
+        currentself_node = self.start
+        while currentself_node:
+            array.append(currentself_node.elem)
+            currentself_node = currentself_node.next
+
+        # for other
+        currentother_node = other.start
+        while currentother_node:
+            array.append(currentother_node.elem)
+            currentother_node = currentother_node.next
+        return LinkedList(array)
 
     def __iadd__(self, other):
-        pass
+        self = self.__add__(other)
+        return self
 
     def __eq__(self, other):
-        pass
+        # length check
+        if self.length == other.length:
+            # This is O(n^2) complexity. There is a better way
+            for idx in range(0, self.length):
+                if self[idx] != other[idx]:
+                    return False
+            return True
+        return False
+
+    def __ne__(self, other):
+        # Just call the __eq__ magic method
+        return not self.__eq__(other)
+        # if self.length == other.length:
+        #     # This is O(n^2) complexity. There is a better way
+        #     for idx in range(0, self.length):
+        #         if self[idx] != other[idx]:
+        #             return True
+        #     return False
+        # return True
 
     def append(self, elem):
-        pass
+        node_append = Node(elem)
+
+        # If we have existing chain
+        if self.length != 0:
+            self.end.next = node_append
+            self.end = node_append
+        else:
+            # If we don't have an existing chain
+            self.start = node_append
+            self.end = node_append
+
+        # Add our internal length counter
+        self.length = self.length + 1
+        # pass
 
     def count(self):
-        pass
+        return self.length
 
     def pop(self, index=None):
-        pass
+        # Handle empty list
+        if self.length == 0:
+            raise IndexError
+
+        # Pop the last element by default
+        if index is None:
+            target_index = self.length - 1
+        else:
+            target_index = index
+        if target_index >= self.length:
+            raise IndexError
+
+        prev = None
+        current = self.start
+        pos = 0
+
+        # While there is a next ref, and haven't
+        while pos < target_index:
+            prev = current
+            current = current.next
+            pos += 1
+        # By the end, the current node will be our target node
+        if prev is None:
+            self.start = current.next
+        else:
+            prev.next = current.next
+        self.length = self.length - 1
+        return current.elem
