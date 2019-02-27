@@ -8,28 +8,24 @@ class LinkedList(AbstractLinkedList):
 
     def __init__(self, elements=None):
         # Define start node
-        # Define end node
-        # Link nodes together
-        # self.start = Node(ele)
         self.start = None
+        # Define end node
         self.end = None
         self.length = 0
         if (elements is None) or len(elements) == 0:
             return
         else:
+            # Link nodes together
             self.length = len(elements)  # An internal counter on our list length
-            # Define start/origin node
-            start_node = Node(elements[0])
-            self.start = start_node
-            self.end = start_node
-            for idx in range(1, self.length):
-                current_node = Node(elements[idx])
-                self.end.next = current_node
-                self.end = current_node
+            for elem in elements:
+                temp_node = Node(elem)
 
-                # hacky way to set start node
-                # if idx == 0:
-                #     self.start = current_node
+                if self.start is None:
+                    self.start = temp_node
+                    self.end = temp_node
+                else:
+                    self.end.next = temp_node
+                    self.end = temp_node
 
     def __str__(self):
         # Rebuild our array
@@ -91,13 +87,6 @@ class LinkedList(AbstractLinkedList):
     def __ne__(self, other):
         # Just call the __eq__ magic method
         return not self.__eq__(other)
-        # if self.length == other.length:
-        #     # This is O(n^2) complexity. There is a better way
-        #     for idx in range(0, self.length):
-        #         if self[idx] != other[idx]:
-        #             return True
-        #     return False
-        # return True
 
     def append(self, elem):
         node_append = Node(elem)
